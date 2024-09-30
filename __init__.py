@@ -211,7 +211,8 @@ class CityGMLDirectorySelector(bpy.types.Operator, ImportHelper):
 
     def execute(self, context):
         folder = os.path.dirname(self.filepath)
-        for file in self.files:
+        for i, file in enumerate(self.files):
+            print(f"File {i + 1}/{len(self.files)}: {file.name}")
             path_to_file = os.path.join(folder, file.name)
             try:
                 main(
