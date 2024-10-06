@@ -1,0 +1,18 @@
+schema_version = "1.0.0"
+
+id = "import_citygml"
+version = "1.0.1"
+name = "Import cityGML"
+description = "Import cityGML files"
+tagline = "Import cityGML files"
+maintainer = "3SirVen"
+type = "add-on"
+permissions = ["files"]
+
+website = "https://github.com/3SirVen/Import-cityGML"
+
+tags = ["Import-Export"]
+
+blender_version_min = "4.2.0"
+
+license = ["SPDX:AGPL-3.0-or-later"]
