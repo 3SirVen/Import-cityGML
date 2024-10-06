@@ -10,20 +10,9 @@ from bpy.props import (
 )
 from bpy_extras.io_utils import ImportHelper
 
-bl_info = {
-    "name": "Import CityGML",
-    "author": "3SirVen",
-    "version": (1, 0, 0),
-    "blender": (4, 2, 0),
-    "category": "Import-Export",
-    "location": "File > Import",
-    "description": "Import geometry from CityGML file(s)",
-    "wiki_url": "https://github.com/ppaawweeuu/Import_CityGML",
-}
-
 # Constants
 WALL_MATERIAL_COLOR = "#c9c9c9"
-ROOF_MATERIAL_COLOR = "#9d6055"
+ROOF_MATERIAL_COLOR = "#727c7c"
 
 
 def hex_to_rgba(hex_color):
@@ -93,7 +82,7 @@ def process_faces(
     return max_coord
 
 
-def main(filename, scale, origin, viewport, separate_materials):
+def main(filename, scale, origin, viewport, separate_materials, wall_mat, roof_mat):
     """Main function to import CityGML file and create Blender mesh."""
     tree = et.parse(filename)
 
@@ -165,12 +154,6 @@ def main(filename, scale, origin, viewport, separate_materials):
 
     current_collection = bpy.context.collection
     current_collection.objects.link(obj)
-
-    wall_mat = bpy.data.materials.new(name="Wall_Material")
-    wall_mat.diffuse_color = hex_to_rgba(WALL_MATERIAL_COLOR)  # Light gray color
-
-    roof_mat = bpy.data.materials.new(name="Roof_Material")
-    roof_mat.diffuse_color = hex_to_rgba(ROOF_MATERIAL_COLOR)  # Red color
 
     # Assign materials to the object
     obj.data.materials.append(wall_mat)
@@ -274,6 +257,14 @@ class CityGMLDirectorySelector(bpy.types.Operator, ImportHelper):
 
     def execute(self, context):
         folder = os.path.dirname(self.filepath)
+        wall_mat = bpy.data.materials.new(name="Wall_Material")
+        wall_mat.diffuse_color = hex_to_rgba(WALL_MATERIAL_COLOR)  # Light gray color
+
+        roof_mat = bpy.data.materials.new(name="Roof_Material")
+        roof_mat.diffuse_color = hex_to_rgba(ROOF_MATERIAL_COLOR)  # Red color
+        roof_mat.specular_intensity = 0.0
+        roof_mat.roughness = 1
+
         for i, file in enumerate(self.files):
             print(f"File {i + 1}/{len(self.files)}: {file.name}")
             path_to_file = os.path.join(folder, file.name)
@@ -288,6 +279,8 @@ class CityGMLDirectorySelector(bpy.types.Operator, ImportHelper):
                     ),
                     viewport=self.viewport_setting,
                     separate_materials=self.separate_materials,
+                    wall_mat=wall_mat,
+                    roof_mat=roof_mat,
                 )
                 self.report({"INFO"}, f"{file.name} imported")
                 print(f"{file.name} imported")
