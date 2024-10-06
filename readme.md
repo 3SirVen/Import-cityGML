@@ -13,6 +13,8 @@ Addon imports geometry from CityGML file (or files) as one mesh/object (per file
 
 > basic means basic :)
 
+Currently requires Blender 4.2.0. It may work on lower versions, but this has not been tested.
+
 ## Installation
 
 1. Download repository as zip (through GitHub this can be done through the `Clone or download` > `Download ZIP` green button).
