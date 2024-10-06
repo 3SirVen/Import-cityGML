@@ -1,7 +1,7 @@
 import os
 import zipfile
 
-ZIP_NAME = 'Import cityGML'
+ZIP_NAME = 'ImportCityGML'
 VERSION = (1, 0, 0)
 FILES_AND_FOLDERS = [
   '../img',
@@ -32,5 +32,5 @@ def create_zip_archive(output_filename, items_to_include, root_dir):
 
 if __name__ == "__main__":
     version_str = '.'.join(map(str, VERSION))
-    output_filename = f"{ZIP_NAME} - {version_str}.zip"
+    output_filename = f"{ZIP_NAME}-{version_str}.zip"
     create_zip_archive(output_filename, FILES_AND_FOLDERS, ROOT_DIR)
