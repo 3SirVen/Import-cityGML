@@ -308,8 +308,3 @@ def unregister():
 
 if __name__ == "__main__":
     register()
-
-    # test call
-    bpy.ops.import_create.citygml("INVOKE_DEFAULT")
-
-    print(f"{CityGMLDirectorySelector.bl_idname} has been registered")
