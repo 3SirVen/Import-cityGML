@@ -12,7 +12,7 @@ from bpy_extras.io_utils import ImportHelper
 
 # Constants
 WALL_MATERIAL_COLOR = "#c9c9c9"
-ROOF_MATERIAL_COLOR = "#727c7c"
+ROOF_MATERIAL_COLOR = "#a62f20"
 
 
 def hex_to_rgba(hex_color):
@@ -183,14 +183,14 @@ def main(filename, scale, origin, viewport, separate_materials, wall_mat, roof_m
 class CityGMLDirectorySelector(bpy.types.Operator, ImportHelper):
     """Operator to select and import CityGML files."""
 
-    bl_idname = "wm.citygml_folder_selector"
+    bl_idname = "import_create.citygml"
     bl_label = "Import cityGML file(s)"
 
     filename_ext = ".gml, .xml"
     use_filter_folder = True
 
     files: CollectionProperty(type=bpy.types.PropertyGroup)  # type: ignore
-    scale_setting: FloatProperty(
+    scale: FloatProperty(
         name="Import Scale",
         description="1 for meters, 0.001 for kilometers",
         soft_min=0.0,
@@ -243,7 +243,7 @@ class CityGMLDirectorySelector(bpy.types.Operator, ImportHelper):
         box = layout.box()
         row = box.row(align=True)
         row.label(text="Import Scale:")
-        row.prop(self, "scale_setting", text="")
+        row.prop(self, "scale", text="")
 
         box = layout.box()
         row = box.row(align=True)
@@ -259,6 +259,8 @@ class CityGMLDirectorySelector(bpy.types.Operator, ImportHelper):
         folder = os.path.dirname(self.filepath)
         wall_mat = bpy.data.materials.new(name="Wall_Material")
         wall_mat.diffuse_color = hex_to_rgba(WALL_MATERIAL_COLOR)  # Light gray color
+        wall_mat.specular_intensity = 0.0
+        wall_mat.roughness = 1
 
         roof_mat = bpy.data.materials.new(name="Roof_Material")
         roof_mat.diffuse_color = hex_to_rgba(ROOF_MATERIAL_COLOR)  # Red color
@@ -271,7 +273,7 @@ class CityGMLDirectorySelector(bpy.types.Operator, ImportHelper):
             try:
                 main(
                     filename=path_to_file,
-                    scale=self.scale_setting,
+                    scale=self.scale,
                     origin=(
                         self.origin_setting_x,
                         self.origin_setting_y,
@@ -306,3 +308,8 @@ def unregister():
 
 if __name__ == "__main__":
     register()
+
+    # test call
+    bpy.ops.import_create.citygml("INVOKE_DEFAULT")
+
+    print(f"{CityGMLDirectorySelector.bl_idname} has been registered")

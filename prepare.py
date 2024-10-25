@@ -7,7 +7,7 @@ ZIP_NAME = "ImportCityGML"
 FILES_AND_FOLDERS = [
     "./img",
     "./__init__.py",
-    "./readme.md",
+    "./README.md",
     "./LICENSE",
     "./blender_manifest.toml",
 ]
@@ -22,7 +22,9 @@ def create_zip_archive(output_filename, items_to_include, root_dir):
     :param items_to_include: A list of files and folders to include in the zip archive.
     :param root_dir: The root directory name to use inside the zip archive.
     """
-    with zipfile.ZipFile(output_filename, "w", zipfile.ZIP_DEFLATED) as zipf:
+    with zipfile.ZipFile(
+        "./releases/" + output_filename, "w", zipfile.ZIP_DEFLATED
+    ) as zipf:
         for item in items_to_include:
             if os.path.isfile(item):
                 arcname = os.path.join(
