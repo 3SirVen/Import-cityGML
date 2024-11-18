@@ -10,6 +10,17 @@ from bpy.props import (
 )
 from bpy_extras.io_utils import ImportHelper
 
+bl_info = {
+    "name": "Import cityGML",
+    "description": "Import cityGML files",
+    "author": "3SirVen",
+    "version": (1, 0, 1),
+    "blender": (4, 2, 0),
+    "doc_url": "https://github.com/3SirVen/Import-cityGML",
+    "support": "COMMUNITY",
+    "category": "Import-Export",
+}
+
 # Constants
 WALL_MATERIAL_COLOR = "#c9c9c9"
 ROOF_MATERIAL_COLOR = "#a62f20"
