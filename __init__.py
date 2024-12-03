@@ -207,7 +207,7 @@ class CityGMLDirectorySelector(bpy.types.Operator, ImportHelper):
         soft_min=0.0,
         soft_max=1.0,
         precision=3,
-        default=1.0,
+        default=0.1,
     )  # type: ignore
     origin_setting_x: FloatProperty(
         name="Origin Point X",
