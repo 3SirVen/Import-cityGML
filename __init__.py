@@ -10,6 +10,17 @@ from bpy.props import (
 )
 from bpy_extras.io_utils import ImportHelper
 
+try:
+    from pyproj import CRS, Transformer
+except ImportError:
+    import subprocess
+    import sys
+
+    subprocess.check_call(
+        [sys.executable, "-m", "pip", "install", "rasterio"], stdout=subprocess.DEVNULL
+    )
+    from pyproj import CRS, Transformer
+
 bl_info = {
     "name": "Import cityGML",
     "description": "Import cityGML files",
@@ -24,6 +35,18 @@ bl_info = {
 # Constants
 WALL_MATERIAL_COLOR = "#c9c9c9"
 ROOF_MATERIAL_COLOR = "#a62f20"
+
+
+def convert_utm_33_to_32(coords):
+    utm_32_coords = []
+    crs_32 = CRS.from_epsg(25832)
+    crs_33 = CRS.from_epsg(25833)
+    transformer = Transformer.from_crs(crs_33, crs_32, always_xy=True)
+    for i in range(0, len(coords), 3):
+        x, y, z = coords[i], coords[i + 1], coords[i + 2]
+        utm_x, utm_y = transformer.transform(x, y)
+        utm_32_coords.extend([utm_x, utm_y, z])
+    return utm_32_coords
 
 
 def hex_to_rgba(hex_color):
@@ -55,6 +78,7 @@ def process_faces(
     scale,
     origin,
     separate_materials,
+    filename,
 ):
     """Add faces to the mesh."""
     for p in faces:
@@ -76,6 +100,10 @@ def process_faces(
         max_v = max(coords)
         if max_v > max_coord:
             max_coord = max_v
+
+        # Convert everything to UTM 32
+        if filename.split("_")[1] == "33":
+            coords = convert_utm_33_to_32(coords)
 
         verts = convert_to_3d_coords(coords, scale, origin)
 
@@ -141,6 +169,7 @@ def main(filename, scale, origin, viewport, separate_materials, wall_mat, roof_m
         scale,
         origin,
         separate_materials,
+        filename,
     )
     max_coord = process_faces(
         wall_faces,
@@ -153,6 +182,7 @@ def main(filename, scale, origin, viewport, separate_materials, wall_mat, roof_m
         scale,
         origin,
         separate_materials,
+        filename,
     )
 
     ob_name = os.path.basename(filename)
@@ -300,6 +330,7 @@ class CityGMLDirectorySelector(bpy.types.Operator, ImportHelper):
             except Exception as e:
                 self.report({"ERROR"}, f"Error importing {file.name}: {e}")
                 print(f"Error importing {file.name}: {e}")
+
         return {"FINISHED"}
 
 
